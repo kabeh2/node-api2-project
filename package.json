@@ -5,11 +5,16 @@
   "private": true,
   "main": "index.js",
   "scripts": {
-    "server": "nodemon index.js"
+    "server": "export NODE_ENV=development && export DEBUG=app:dev && nodemon index.js"
   },
   "dependencies": {
+    "debug": "^4.1.1",
+    "express": "^4.17.1",
+    "helmet": "^3.21.3",
     "knex": "^0.20.7",
-    "sqlite3": "^4.1.1"
+    "morgan": "^1.9.1",
+    "sqlite3": "^4.1.1",
+    "yup": "^0.28.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.2"
