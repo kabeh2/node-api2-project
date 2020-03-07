@@ -8,12 +8,13 @@ const deleteIcon = <FontAwesomeIcon icon={faTrashAlt} />;
 const updateIcon = <FontAwesomeIcon icon={faEdit} />;
 
 const PostTable = ({ posts, user }) => {
-  console.log("USER TABLE: ", user);
+  console.log("POSTS: ", posts);
+  console.log("USER: ", user);
   return (
     <Table hover>
       <thead>
         <tr>
-          <th>#</th>
+          {user === null && <th>#</th>}
           <th>Title</th>
           {user === null && <th>Content</th>}
           <th>More</th>
@@ -21,9 +22,9 @@ const PostTable = ({ posts, user }) => {
       </thead>
       <tbody>
         {posts &&
-          posts.map(post => (
+          posts.map((post, index) => (
             <tr key={post.id}>
-              <th scope="row">{post.id}</th>
+              {user === null && <th scope="row">{index + 1}</th>}
               <td>{post.title}</td>
               {user === null && (
                 <td>

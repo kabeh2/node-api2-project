@@ -2,7 +2,8 @@ import { actionTypes } from "../actions";
 
 const initialState = {
   loading: false,
-  data: [],
+  posts: [],
+  comments: [],
   error: ""
 };
 
@@ -18,13 +19,24 @@ const fetchReducer = (state = initialState, action) => {
       return {
         ...state,
         loading: false,
-        data: action.payload
+        posts: action.payload
+      };
+    case actionTypes.FETCH_COMMENTS:
+      return {
+        ...state,
+        loading: false,
+        comments: action.payload
       };
     case actionTypes.FETCH_ERROR:
       return {
         ...state,
         loading: false,
         error: action.payload
+      };
+    case actionTypes.CLEAR_COMMENTS:
+      return {
+        ...state,
+        comments: []
       };
     default:
       return state;
