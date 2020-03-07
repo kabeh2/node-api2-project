@@ -1,10 +1,15 @@
 import React from "react";
+import { connect } from "react-redux";
+import { useHistory } from "react-router";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { Button } from "reactstrap";
 import TextInput from "./TextInput";
+import { addPost } from "../../redux/actions/actionCreators";
 
-const PostForm = () => {
+const PostForm = ({ addPost }) => {
+  const history = useHistory();
+
   return (
     <Formik
       initialValues={{
@@ -13,17 +18,22 @@ const PostForm = () => {
       }}
       validationSchema={Yup.object({
         title: Yup.string()
-          .max(15, "Must be 15 characters or less")
+          .max(100, "Must be 100 characters or less")
           .required("Required"),
         contents: Yup.string()
-          .max(20, "Must be 20 characters or less")
+          .max(150, "Must be 150 characters or less")
           .required("Required")
       })}
-      onSubmit={(values, { setSubmitting }) => {
-        setTimeout(() => {
-          alert(JSON.stringify(values, null, 2));
-          setSubmitting(false);
-        }, 400);
+      onSubmit={async (values, { setErrors, setStatus, resetForm }) => {
+        try {
+          await addPost(values);
+          resetForm({});
+          setStatus({ success: true });
+          history.replace("/");
+        } catch (error) {
+          setStatus({ success: false });
+          setErrors({ submit: error.message });
+        }
       }}
     >
       <Form>
@@ -51,4 +61,8 @@ const PostForm = () => {
   );
 };
 
-export default PostForm;
+const mapDispatchToProps = dispatch => ({
+  addPost: post => dispatch(addPost(post))
+});
+
+export default connect(null, mapDispatchToProps)(PostForm);

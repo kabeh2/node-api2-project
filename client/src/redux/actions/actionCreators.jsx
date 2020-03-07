@@ -18,3 +18,22 @@ export const getRequest = id => ({
   type: actionTypes.GET_REQUEST,
   payload: id
 });
+
+export const getComments = id => ({
+  type: actionTypes.GET_COMMENTS,
+  payload: id
+});
+
+export const fetchComments = comments => ({
+  type: actionTypes.FETCH_COMMENTS,
+  payload: comments
+});
+
+export const clearComments = () => ({
+  type: actionTypes.CLEAR_COMMENTS
+});
+
+export const addPost = post => ({
+  type: actionTypes.ADD_POST,
+  payload: post
+});

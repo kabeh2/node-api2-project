@@ -1,2 +1,7 @@
-export { fetchRequest, fetchSuccess, fetchError } from "./actionCreators";
+export {
+  fetchRequest,
+  fetchSuccess,
+  fetchComments,
+  fetchError
+} from "./actionCreators";
 export { actionTypes } from "./actionTypes";

@@ -3,14 +3,16 @@ import { connect } from "react-redux";
 import { useRouteMatch } from "react-router";
 import styled from "styled-components";
 import { Row, Col } from "reactstrap";
-import { getRequest } from "../redux/actions/actionCreators";
+import { getRequest, getComments } from "../redux/actions/actionCreators";
 import PostTable from "../components/PostTable";
+import CommentTemplate from "../components/CommentTemplate";
+import CommentForm from "../components/forms/CommentForm";
 
 const HeaderMain = styled.h1`
   font-family: Montserrat, sans-serif;
 `;
 
-function Home({ posts, getRequest }) {
+function Home({ posts, comments, getRequest, getComments }) {
   const [user, setUser] = useState(null);
   const match = useRouteMatch();
 
@@ -18,12 +20,13 @@ function Home({ posts, getRequest }) {
     getRequest(match.params.id);
     if (match.params.id) {
       setUser(match.params.id);
+      getComments(match.params.id);
     } else {
       setUser(null);
     }
-  }, [getRequest, match]);
+  }, [getRequest, getComments, match]);
 
-  console.log("POSTS", posts);
+  console.log(comments);
 
   return (
     <>
@@ -37,16 +40,20 @@ function Home({ posts, getRequest }) {
       ) : (
         <h1>Loading...</h1>
       )}
+      {user && <CommentForm postId={match.params.id} />}
+      {user && <CommentTemplate comments={comments} />}
     </>
   );
 }
 
-const mapStateToProps = ({ fetchReducer: { data } }) => ({
-  posts: data
+const mapStateToProps = ({ fetchReducer: { posts, comments } }) => ({
+  posts,
+  comments
 });
 
 const mapDispatchToProps = dispatch => ({
-  getRequest: id => dispatch(getRequest(id))
+  getRequest: id => dispatch(getRequest(id)),
+  getComments: id => dispatch(getComments(id))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

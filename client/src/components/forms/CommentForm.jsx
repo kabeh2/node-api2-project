@@ -3,19 +3,20 @@ import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import TextInput from "./TextInput";
 
-const CommentForm = () => {
+const CommentForm = ({ postId }) => {
+  console.log(postId);
   return (
     <>
       <Formik
         initialValues={{
           text: "",
-          post_id: ""
+          post_id: postId
         }}
         validationSchema={Yup.object({
-          comment: Yup.string()
+          text: Yup.string()
             .max(15, "Must be 15 characters or less")
             .required("Required"),
-          contents: Yup.number()
+          post_id: Yup.number()
             .integer()
             .required("Required")
         })}
@@ -29,12 +30,11 @@ const CommentForm = () => {
         <Form>
           <TextInput
             label="Comment"
-            name="comment"
+            name="text"
             type="text"
             placeholder="Write comment here..."
+            commentInput
           />
-
-          <button type="submit">Submit</button>
         </Form>
       </Formik>
     </>
