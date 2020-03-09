@@ -47,7 +47,7 @@ export const addComment = (id, comment) => ({
 
 // FUNCTION USED IN SAGA
 export const addCommentAction = comment => ({
-  type: actionTypes.ADD_COMMENT,
+  type: actionTypes.ADD_COMMENT_ACTION,
   payload: comment
 });
 // **************ADD COMMENT ACTION CREATORS ************ //
