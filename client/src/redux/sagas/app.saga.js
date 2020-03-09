@@ -92,7 +92,6 @@ function* onAddPost() {
 
 // ADD COMMENT FETCH CALL
 const fetchAddComment = async (id, comment) => {
-  console.log("SAGA FETCH POSTID: ", id);
   const data = await axios.post(`${apiEndpoint}/${id}/comments`, comment);
   return data;
 };
@@ -101,14 +100,11 @@ const fetchAddComment = async (id, comment) => {
 function* tryAddComment(action) {
   try {
     yield put(fetchRequest());
-    console.log("FETCH ACTION: ", action);
-    console.log("SAGA POSTID 1: ", action.payload.id);
     const { data } = yield call(
       fetchAddComment,
       action.payload.id,
       action.payload.comment
     );
-    console.log("SAGA POSTID 2: ", action.payload.id);
 
     yield put(addCommentAction(data));
   } catch (error) {

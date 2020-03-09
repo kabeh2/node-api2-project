@@ -6,7 +6,6 @@ import TextInput from "./TextInput";
 import { addComment } from "../../redux/actions/actionCreators";
 
 const CommentForm = ({ postId, addComment, commentAdded }) => {
-  console.log("FORM POSTID: ", postId);
   return (
     <>
       <Formik
