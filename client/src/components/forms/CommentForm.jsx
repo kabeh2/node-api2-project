@@ -1,10 +1,12 @@
 import React from "react";
+import { connect } from "react-redux";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import TextInput from "./TextInput";
+import { addComment } from "../../redux/actions/actionCreators";
 
-const CommentForm = ({ postId }) => {
-  console.log(postId);
+const CommentForm = ({ postId, addComment, commentAdded }) => {
+  console.log("FORM POSTID: ", postId);
   return (
     <>
       <Formik
@@ -20,11 +22,16 @@ const CommentForm = ({ postId }) => {
             .integer()
             .required("Required")
         })}
-        onSubmit={(values, { setSubmitting }) => {
-          setTimeout(() => {
-            alert(JSON.stringify(values, null, 2));
-            setSubmitting(false);
-          }, 400);
+        onSubmit={async (values, { setStatus, setErrors, resetForm }) => {
+          try {
+            await addComment(postId, values);
+            commentAdded();
+            setStatus({ success: true });
+            resetForm({});
+          } catch (error) {
+            setStatus({ success: false });
+            setErrors({ error: error.response });
+          }
         }}
       >
         <Form>
@@ -41,4 +48,8 @@ const CommentForm = ({ postId }) => {
   );
 };
 
-export default CommentForm;
+const mapDispatchToProps = dispatch => ({
+  addComment: (id, comment) => dispatch(addComment(id, comment))
+});
+
+export default connect(null, mapDispatchToProps)(CommentForm);

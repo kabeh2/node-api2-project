@@ -1,15 +1,27 @@
 import React from "react";
+import { connect } from "react-redux";
 import { Table } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashAlt, faEdit } from "@fortawesome/free-regular-svg-icons";
 import { Link } from "react-router-dom";
+import styled from "styled-components";
+import { deletePost } from "../redux/actions/actionCreators";
 
 const deleteIcon = <FontAwesomeIcon icon={faTrashAlt} />;
 const updateIcon = <FontAwesomeIcon icon={faEdit} />;
 
-const PostTable = ({ posts, user }) => {
-  console.log("POSTS: ", posts);
-  console.log("USER: ", user);
+const IconButton = styled.div`
+  cursor: pointer;
+  display: inline-block;
+  transition: all 0.2s ease;
+  color: dodgerblue;
+
+  &:hover {
+    color: blue;
+  }
+`;
+
+const PostTable = ({ posts, user, deletePost }) => {
   return (
     <Table hover>
       <thead>
@@ -31,9 +43,18 @@ const PostTable = ({ posts, user }) => {
                   <Link to={`/${post.id}`}>{post.contents}</Link>
                 </td>
               )}
-              <td className="d-flex align-items-center justify-content-between">
-                {deleteIcon} | {updateIcon}
-              </td>
+              {user === null ? (
+                <td className="d-flex align-items-center justify-content-between">
+                  <IconButton onClick={() => deletePost(post.id, posts)}>
+                    {deleteIcon}
+                  </IconButton>{" "}
+                  | {updateIcon}
+                </td>
+              ) : (
+                <td className="d-flex align-items-center justify-content-between">
+                  {updateIcon}
+                </td>
+              )}
             </tr>
           ))}
       </tbody>
@@ -41,4 +62,8 @@ const PostTable = ({ posts, user }) => {
   );
 };
 
-export default PostTable;
+const mapDispatchToProps = dispatch => ({
+  deletePost: (id, post) => dispatch(deletePost(id, post))
+});
+
+export default connect(null, mapDispatchToProps)(PostTable);
