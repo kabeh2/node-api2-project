@@ -12,25 +12,32 @@ const HeaderMain = styled.h1`
   font-family: Montserrat, sans-serif;
 `;
 
-function Home({ posts, comments, getRequest, getComments }) {
+function Home({ posts, comments, error, getRequest, getComments }) {
   const [user, setUser] = useState(null);
+  const [commentAdded, setCommentAdded] = useState(false);
   const match = useRouteMatch();
+
+  const commentDidUpdate = () => {
+    setCommentAdded(!commentAdded);
+  };
 
   useEffect(() => {
     getRequest(match.params.id);
+  }, [getRequest, match]);
+
+  useEffect(() => {
     if (match.params.id) {
       setUser(match.params.id);
       getComments(match.params.id);
     } else {
       setUser(null);
     }
-  }, [getRequest, getComments, match]);
-
-  console.log(comments);
+  }, [getComments, match, commentAdded]);
 
   return (
     <>
       <HeaderMain>Guess Who?!?!</HeaderMain>
+      <Row className="justify-content-center mt-4"></Row>
       {posts[0] ? (
         <Row className="justify-content-center mt-4">
           <Col>
@@ -40,15 +47,19 @@ function Home({ posts, comments, getRequest, getComments }) {
       ) : (
         <h1>Loading...</h1>
       )}
-      {user && <CommentForm postId={match.params.id} />}
+      {user && (
+        <CommentForm postId={match.params.id} commentAdded={commentDidUpdate} />
+      )}
       {user && <CommentTemplate comments={comments} />}
+      {error && <h2>{error}</h2>}
     </>
   );
 }
 
-const mapStateToProps = ({ fetchReducer: { posts, comments } }) => ({
+const mapStateToProps = ({ fetchReducer: { posts, comments, error } }) => ({
   posts,
-  comments
+  comments,
+  error
 });
 
 const mapDispatchToProps = dispatch => ({

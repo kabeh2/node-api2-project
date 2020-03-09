@@ -7,11 +7,11 @@ router.get("/", (req, res) => {
   posts
     .find()
     .then(posts => {
-      res.status(200).json(posts);
+      res.status(200).send(posts);
     })
     .catch(error => {
       debug("Error: ", error);
-      res.status(500).json({
+      res.status(500).send({
         error: "The posts information could not be retrieved."
       });
     });
@@ -24,16 +24,16 @@ router.get("/:id", (req, res) => {
     .findById(postId)
     .then(post => {
       if (post[0]) {
-        res.status(200).json(post);
+        res.status(200).send(post);
       } else {
-        res.status(404).json({
+        res.status(404).send({
           message: "The post with the specified ID does not exist."
         });
       }
     })
     .catch(error => {
       debug("Error: ", error);
-      res.status(500).json({
+      res.status(500).send({
         error: "The post information could not be retrieved."
       });
     });
@@ -46,16 +46,16 @@ router.get("/:id/comments", (req, res) => {
     .findPostComments(postId)
     .then(comments => {
       if (comments[0]) {
-        res.status(200).json(comments);
+        res.status(200).send(comments);
       } else {
-        res.status(404).json({
-          message: "The post with the specified ID does not exist."
+        res.status(404).send({
+          message: "There are currently no comments for this post."
         });
       }
     })
     .catch(error => {
       debug("Error: ", error);
-      res.status(500).json({
+      res.status(500).send({
         error: "The comments information could not be retrieved."
       });
     });
@@ -74,17 +74,17 @@ router.post("/", async (req, res) => {
       console.log("Validation: ", validation);
       posts.insert(post).then(response => {
         if (response) {
-          res.status(201).json(response);
+          res.status(201).send(response);
         }
       });
     } else {
-      res.status(400).json({
+      res.status(400).send({
         errorMessage: "Please provide title and contents for the post."
       });
     }
   } catch (error) {
     debug("Error: ", error);
-    res.status(500).json({
+    res.status(500).send({
       error: "There was an error while saving the post to the database"
     });
   }
@@ -103,20 +103,20 @@ router.post("/:id/comments", async (req, res) => {
     if (post) {
       if (validation) {
         posts.insertComment(comment).then(response => {
-          res.status(201).json(response);
+          res.status(201).send(response);
         });
       } else {
         res
           .status(404)
-          .json({ errorMessage: "Please provide text for the comment." });
+          .send({ errorMessage: "Please provide text for the comment." });
       }
     } else {
       res
         .status(404)
-        .json({ message: "The post with the specified ID does not exist." });
+        .send({ message: "The post with the specified ID does not exist." });
     }
   } catch (error) {
-    res.status(500).json({
+    res.status(500).send({
       error: "There was an error while saving the comment to the database"
     });
   }
@@ -128,15 +128,15 @@ router.delete("/:id", (req, res) => {
   try {
     posts.remove(postId).then(post => {
       if (post) {
-        res.status(200).json(post);
+        res.status(200).send(post);
       } else {
-        res.status(404).json({
+        res.status(404).send({
           message: "The post with the specified ID does not exist."
         });
       }
     });
   } catch (error) {
-    res.status(500).json({
+    res.status(500).send({
       error: "The post could not be removed"
     });
   }
@@ -157,20 +157,20 @@ router.put("/:id", async (req, res) => {
       console.log("UPDATED POST: ", updatedPost);
       if (validation) {
         console.log("Validation", validation);
-        res.status(201).json(updatedPost);
+        res.status(201).send(updatedPost);
       } else {
-        res.status(400).json({
+        res.status(400).send({
           errorMessage: "Please provide title and contents for the post."
         });
       }
     } else {
-      res.status(404).json({
+      res.status(404).send({
         message: "The post with the specified ID does not exist."
       });
     }
   } catch (error) {
     debug("Error: ", error);
-    res.status(500).json({
+    res.status(500).send({
       error: "The post information could not be modified."
     });
   }

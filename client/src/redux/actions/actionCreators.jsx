@@ -37,3 +37,22 @@ export const addPost = post => ({
   type: actionTypes.ADD_POST,
   payload: post
 });
+
+// **************ADD COMMENT ACTION CREATORS ************ //
+// FUNCTION DISPATCHTOPROPS
+export const addComment = (id, comment) => ({
+  type: actionTypes.ADD_COMMENT,
+  payload: { id, comment }
+});
+
+// FUNCTION USED IN SAGA
+export const addCommentAction = comment => ({
+  type: actionTypes.ADD_COMMENT,
+  payload: comment
+});
+// **************ADD COMMENT ACTION CREATORS ************ //
+
+export const deletePost = (id, posts) => ({
+  type: actionTypes.DELETE_POST,
+  payload: { id, posts }
+});

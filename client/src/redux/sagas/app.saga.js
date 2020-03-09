@@ -8,7 +8,7 @@ import {
   fetchComments as fetchCommentsAction,
   fetchError
 } from "../actions";
-import { clearComments } from "../actions/actionCreators";
+import { clearComments, addCommentAction } from "../actions/actionCreators";
 
 async function fetchData(id) {
   const { data } = await axios.get(`${apiEndpoint}/${id ? id : ""}`);
@@ -16,7 +16,7 @@ async function fetchData(id) {
 }
 
 // GET REQUEST WORKER
-export function* tryGetRequest(action) {
+function* tryGetRequest(action) {
   try {
     yield put(fetchRequest());
     const data = yield call(fetchData, action.payload);
@@ -32,37 +32,37 @@ export function* tryGetRequest(action) {
 
     yield put(fetchSuccess(dataArray));
   } catch (error) {
-    yield put(fetchError(error.message));
+    yield put(fetchError(error.response.data.message));
   }
 }
 
 // GET REQUEST WATCHER
-export function* onGetRequest() {
+function* onGetRequest() {
   yield takeLatest(actionTypes.GET_REQUEST, tryGetRequest);
 }
 
 async function fetchComments(id) {
-  const { data } = await axios.get(`${apiEndpoint}/${id}/comments`);
+  const data = await axios.get(`${apiEndpoint}/${id}/comments`);
   return data;
 }
 
 // GET COMMENTS WORKER
-export function* tryGetComments(action) {
+function* tryGetComments(action) {
   try {
-    const data = yield call(fetchComments, action.payload);
+    const { data } = yield call(fetchComments, action.payload);
     yield put(clearComments());
     yield put(fetchRequest());
 
     yield put(fetchCommentsAction(data));
   } catch (error) {
-    console.log("Error: ", error.message);
+    console.log("Error: ", error.response.data.message);
     yield put(clearComments());
-    yield put(fetchError(error.message));
+    yield put(fetchError(error.response.data.message));
   }
 }
 
 // GET COMMENTS WATCHER
-export function* onGetComments() {
+function* onGetComments() {
   yield takeLatest(actionTypes.GET_COMMENTS, tryGetComments);
 }
 
@@ -72,7 +72,7 @@ const fetchAddPost = async post => {
 };
 
 // ADD POSTS WORKER
-export function* tryAddPost(action) {
+function* tryAddPost(action) {
   try {
     yield put(fetchRequest());
 
@@ -86,10 +86,74 @@ export function* tryAddPost(action) {
 }
 
 // ADD POSTS WATCHER
-export function* onAddPost() {
+function* onAddPost() {
   yield takeLatest(actionTypes.ADD_POST, tryAddPost);
 }
 
+// ADD COMMENT FETCH CALL
+const fetchAddComment = async (id, comment) => {
+  console.log("SAGA FETCH POSTID: ", id);
+  const data = await axios.post(`${apiEndpoint}/${id}/comments`, comment);
+  return data;
+};
+
+// ADD COMMENT WORKER
+function* tryAddComment(action) {
+  try {
+    yield put(fetchRequest());
+    console.log("FETCH ACTION: ", action);
+    console.log("SAGA POSTID 1: ", action.payload.id);
+    const { data } = yield call(
+      fetchAddComment,
+      action.payload.id,
+      action.payload.comment
+    );
+    console.log("SAGA POSTID 2: ", action.payload.id);
+
+    yield put(addCommentAction(data));
+  } catch (error) {
+    console.log("Error: ", error.response.data.message);
+    yield put(fetchError(error.response.data.message));
+  }
+}
+
+// ADD COMMENT WATCHER
+function* onAddComment() {
+  yield takeLatest(actionTypes.ADD_COMMENT, tryAddComment);
+}
+
+const fetchDelete = async id => {
+  return await axios.delete(`${apiEndpoint}/${id}`);
+};
+
+function* tryDeletePost(action) {
+  yield put(fetchRequest());
+
+  const postsCopy = [...action.payload.posts];
+  const postsUpdated = [...action.payload.posts].filter(
+    post => post.id !== action.payload.id
+  );
+  yield put(fetchSuccess(postsUpdated));
+
+  try {
+    yield call(fetchDelete, action.payload.id);
+  } catch (error) {
+    console.log("Error: ", error.response.data.message);
+    yield put(fetchSuccess(postsCopy));
+    yield put(fetchError(error.response.data.message));
+  }
+}
+
+function* onDeletePost() {
+  yield takeLatest(actionTypes.DELETE_POST, tryDeletePost);
+}
+
 export default function* appSagas() {
-  yield all([call(onGetRequest), call(onGetComments), call(onAddPost)]);
+  yield all([
+    call(onGetRequest),
+    call(onGetComments),
+    call(onAddPost),
+    call(onAddComment),
+    call(onDeletePost)
+  ]);
 }
