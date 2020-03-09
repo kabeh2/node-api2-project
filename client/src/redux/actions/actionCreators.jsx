@@ -56,3 +56,8 @@ export const deletePost = (id, posts) => ({
   type: actionTypes.DELETE_POST,
   payload: { id, posts }
 });
+
+export const updatePost = (id, post) => ({
+  type: actionTypes.UPDATE_POST,
+  payload: { id, post }
+});

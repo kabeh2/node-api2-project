@@ -12,6 +12,7 @@ function App() {
       <AppNavbar />
       <Container className="py-5">
         <Switch>
+          <Route path="/update/:id" component={Add} />
           <Route path="/add" component={Add} />
           <Route exact path="/:id" component={Home} />
           <Route

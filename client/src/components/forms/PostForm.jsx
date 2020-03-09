@@ -1,32 +1,38 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import { useHistory } from "react-router";
+import { useHistory, useLocation } from "react-router";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { Button } from "reactstrap";
 import TextInput from "./TextInput";
-import { addPost } from "../../redux/actions/actionCreators";
+import { addPost, updatePost } from "../../redux/actions/actionCreators";
 
-const PostForm = ({ addPost }) => {
+const PostForm = ({ addPost, updatePost }) => {
   const history = useHistory();
+  const location = useLocation();
 
   return (
     <Formik
       initialValues={{
-        title: "",
-        contents: ""
+        title: location.state ? location.state.postUpdates.title : "",
+        contents: location.state ? location.state.postUpdates.contents : ""
       }}
       validationSchema={Yup.object({
         title: Yup.string()
-          .max(100, "Must be 100 characters or less")
+          .max(200, "Must be 100 characters or less")
           .required("Required"),
         contents: Yup.string()
-          .max(150, "Must be 150 characters or less")
+          .max(300, "Must be 150 characters or less")
           .required("Required")
       })}
       onSubmit={async (values, { setErrors, setStatus, resetForm }) => {
         try {
-          await addPost(values);
+          if (location.state) {
+            await updatePost(location.state.id, values);
+          } else {
+            await addPost(values);
+          }
           resetForm({});
           setStatus({ success: true });
           history.replace("/");
@@ -50,9 +56,11 @@ const PostForm = ({ addPost }) => {
           placeholder="Write contents copy here..."
         />
 
-        <Button type="button" className="mr-2">
-          Cancel
-        </Button>
+        <Link to="/">
+          <Button type="button" className="mr-2">
+            Cancel
+          </Button>
+        </Link>
         <Button color="primary" type="submit">
           Submit
         </Button>
@@ -62,7 +70,8 @@ const PostForm = ({ addPost }) => {
 };
 
 const mapDispatchToProps = dispatch => ({
-  addPost: post => dispatch(addPost(post))
+  addPost: post => dispatch(addPost(post)),
+  updatePost: (id, post) => dispatch(updatePost(id, post))
 });
 
 export default connect(null, mapDispatchToProps)(PostForm);

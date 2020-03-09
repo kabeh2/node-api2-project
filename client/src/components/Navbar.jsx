@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { NavLink as RRNavLink } from "react-router-dom";
+import { useLocation } from "react-router";
 import {
   Collapse,
   Navbar,
@@ -13,6 +14,7 @@ import {
 
 const AppNavbar = props => {
   const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
 
   const toggle = () => setIsOpen(!isOpen);
 
@@ -36,18 +38,20 @@ const AppNavbar = props => {
                 </NavLink>
               </NavItem>
             </Nav>
-            <Nav navbar>
-              <NavItem>
-                <NavLink
-                  tag={RRNavLink}
-                  to="/add"
-                  className="nav-link"
-                  activeClassName="active"
-                >
-                  Add
-                </NavLink>
-              </NavItem>
-            </Nav>
+            {!location.state && (
+              <Nav navbar>
+                <NavItem>
+                  <NavLink
+                    tag={RRNavLink}
+                    to="/add"
+                    className="nav-link"
+                    activeClassName="active"
+                  >
+                    Add
+                  </NavLink>
+                </NavItem>
+              </Nav>
+            )}
           </Collapse>
         </Container>
       </Navbar>

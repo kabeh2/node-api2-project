@@ -148,12 +148,39 @@ function* onDeletePost() {
   yield takeLatest(actionTypes.DELETE_POST, tryDeletePost);
 }
 
+const fetchUpdatePost = async (id, post) => {
+  const { data } = await axios.put(`${apiEndpoint}/${id}`, post);
+  return data;
+};
+
+function* tryUpdatePost(action) {
+  yield put(fetchRequest());
+  try {
+    yield put(fetchRequest());
+    const data = yield call(
+      fetchUpdatePost,
+      action.payload.id,
+      action.payload.post
+    );
+
+    yield put(fetchSuccess(data));
+  } catch (error) {
+    console.log("Error: ", error.response);
+    yield put(fetchError(error.response));
+  }
+}
+
+function* onUpdatePost() {
+  yield takeLatest(actionTypes.UPDATE_POST, tryUpdatePost);
+}
+
 export default function* appSagas() {
   yield all([
     call(onGetRequest),
     call(onGetComments),
     call(onAddPost),
     call(onAddComment),
-    call(onDeletePost)
+    call(onDeletePost),
+    call(onUpdatePost)
   ]);
 }
