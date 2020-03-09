@@ -48,11 +48,38 @@ const PostTable = ({ posts, user, deletePost }) => {
                   <IconButton onClick={() => deletePost(post.id, posts)}>
                     {deleteIcon}
                   </IconButton>{" "}
-                  | {updateIcon}
+                  |{" "}
+                  <Link
+                    to={{
+                      pathname: `/update/${post.id}`,
+                      state: {
+                        id: post.id,
+                        postUpdates: {
+                          title: post.title,
+                          contents: post.contents
+                        }
+                      }
+                    }}
+                  >
+                    {updateIcon}
+                  </Link>
                 </td>
               ) : (
                 <td className="d-flex align-items-center justify-content-between">
-                  {updateIcon}
+                  <Link
+                    to={{
+                      pathname: `/update/${post.id}`,
+                      state: {
+                        id: post.id,
+                        postUpdates: {
+                          title: post.title,
+                          contents: post.contents
+                        }
+                      }
+                    }}
+                  >
+                    {updateIcon}
+                  </Link>
                 </td>
               )}
             </tr>

@@ -128,7 +128,7 @@ router.delete("/:id", (req, res) => {
   try {
     posts.remove(postId).then(post => {
       if (post) {
-        res.status(200).send(post);
+        res.status(200).json(post);
       } else {
         res.status(404).send({
           message: "The post with the specified ID does not exist."
@@ -157,7 +157,7 @@ router.put("/:id", async (req, res) => {
       console.log("UPDATED POST: ", updatedPost);
       if (validation) {
         console.log("Validation", validation);
-        res.status(201).send(updatedPost);
+        res.status(201).json(updatedPost);
       } else {
         res.status(400).send({
           errorMessage: "Please provide title and contents for the post."
